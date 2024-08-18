@@ -17,33 +17,6 @@ def save_best_params_to_csv(best_params):
             writer.writerow([param, value])
 
 
-# def pred_xgb(loss, alpha, x_train, y_train, x_val, y_val, x_test, y_test):
-#     # Define parameter grid for grid search
-#     param_grid = {
-#         'learning_rate': [0.1, 0.3, 0.01],
-#         'max_depth': [7, 10],
-#         'n_estimators': [50, 100],
-#         'colsample_bytree': [0.3, 0.5, 0.7]
-#     }
-#
-#     loss_xgb = xgb.XGBClassifier(objective=call_loss(loss, alpha), seed=4)
-#
-#     # Perform grid search
-#     grid_search = GridSearchCV(estimator=loss_xgb, param_grid=param_grid, cv=3, scoring='accuracy')
-#     grid_search.fit(x_train, y_train)
-#
-#     best_params = grid_search.best_params_
-#     best_xgb = grid_search.best_estimator_
-#     print(best_params.items())
-#     save_best_params_to_csv(best_params)
-#
-#     best_xgb.fit(x_train, y_train, verbose=False, eval_metric=cem, eval_set=[(x_val, y_val)])
-#
-#     preds = best_xgb.predict(x_test)
-#     pred_probabilities = best_xgb.predict_proba(x_test)
-#
-#     return preds, pred_probabilities
-
 
 def pred_xgb(loss, alpha, x_train, y_train, x_val, y_val, x_test, y_test, seed):
     params = PARAMS
@@ -158,11 +131,3 @@ if __name__ == '__main__':
                 print("Best accuracy:", metrics["Best Accuracy"])
                 print("Best CEM:", metrics["Best CEM"])
                 print("Best MSE:", metrics["Best MSE"])
-
-                update_csv("metrics_per_loss.csv", data_name, bins, loss, metrics["Best Accuracy"][1],
-                           metrics["Best Accuracy"][0],
-                           metrics["Best CEM"][1], metrics["Best CEM"][0], metrics["Best MSE"][1],
-                           metrics["Best MSE"][0])
-
-    best_overall_metrics = find_best_overall_metrics("metrics_per_loss.csv")
-    write_best_overall_metrics("best_overall_metrics.csv", best_overall_metrics)
