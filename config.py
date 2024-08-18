@@ -68,7 +68,7 @@ DATA = [
 # LOSS = [["SORD_" + type, "OLL_" + type, "Accumulating_SORD_prox_" + type] for type in types]
 # LOSS = [item for sublist in LOSS for item in sublist]
 # LOSS = [item for sublist in [LOSS, base] for item in sublist]
-LOSS = ["SORD","OLL","Cross_Entropy","Accumulating_SORD_prox_max"]
+LOSS = ["SORD","OLL","Cross_Entropy","SLACE_max"]
 
 ALPHA = [0.3, 0.5, 0.8, 1, 2, 3, 4, 7, 10, 15, 20, 25]
 
