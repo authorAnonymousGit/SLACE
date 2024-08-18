@@ -134,71 +134,6 @@ def accumulating_with_sord_prox(alpha, return_loss=False, type="max"):
     return Loss
 
 
-#
-#
-# def accumulating_with_sord_prox(alpha, return_loss=False):
-#     def Loss(targets, softmax_vals):
-#         labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-#                                                                                                            softmax_vals)
-#
-#         phi = torch.max(prox_mat) - prox_mat[targets].to(device)
-#         softmax_targets = f.softmax(-alpha * phi, dim=1).to(device)
-#
-#         one_hot_target = torch.tensor(np.zeros([num_examples, labels_num])).to(device)
-#         one_hot_target[range(num_examples), targets] = 1
-#         one_hot_target_comp = 1 - one_hot_target
-#         mass_weights = one_hot_target * softmax_targets + one_hot_target_comp * softmax_targets
-#
-#         accumulating_softmax = torch.matmul(prox_dom[targets.long()].double(),
-#                                             torch.unsqueeze(softmax_vals, 2).double()).double().squeeze(dim=2)
-#
-#         loss_val = -1 * torch.sum(mass_weights * torch.log(accumulating_softmax))
-#
-#         if return_loss == True:
-#             return loss_val
-#
-#         loss_val.backward()
-#         grads = softmax_vals.grad.numpy()
-#
-#         del softmax_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
-#             mass_weights
-#
-#         return grads.flatten(), np.ones(grads.shape).flatten()
-#
-#     return Loss
-#
-#
-# def accumulating_with_sord_norm_prox(alpha, return_loss=False):
-#     def Loss(targets, softmax_vals):
-#         labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-#                                                                                                            softmax_vals)
-#
-#         phi = torch.max(norm_prox_mat) - norm_prox_mat[targets].to(device)
-#         softmax_targets = f.softmax(-alpha * phi, dim=1).to(device)
-#
-#         one_hot_target = torch.tensor(np.zeros([num_examples, labels_num])).to(device)
-#         one_hot_target[range(num_examples), targets] = 1
-#         one_hot_target_comp = 1 - one_hot_target
-#         mass_weights = one_hot_target * softmax_targets + one_hot_target_comp * softmax_targets
-#
-#         accumulating_softmax = torch.matmul(prox_dom[targets.long()].double(),
-#                                             torch.unsqueeze(softmax_vals, 2).double()).double().squeeze(dim=2)
-#
-#         loss_val = -1 * torch.sum(mass_weights * torch.log(accumulating_softmax))
-#
-#         if return_loss == True:
-#             return loss_val
-#
-#         loss_val.backward()
-#         grads = softmax_vals.grad.numpy()
-#
-#         del softmax_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
-#             mass_weights
-#
-#         return grads.flatten(), np.ones(grads.shape).flatten()
-#
-#     return Loss
-
 def accumulating_with_sord(alpha, return_loss=False):
     def Loss(targets, softmax_vals):
         labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
@@ -394,6 +329,8 @@ def call_loss(name, alpha=1, return_loss=False):
         return accumulating_with_sord_prox(alpha, return_loss=return_loss, type="norm_max")
     if name == "Accumulating_SORD":
         return accumulating_with_sord(alpha, return_loss=return_loss)
+    if name == "SLACE":
+        return accumulating_with_sord(alpha, return_loss=return_loss)
     types = ["max","norm_max", "norm_log", "log", "norm_division", "division"]
     for type in types:
         if name == "SORD_"+type:
@@ -401,4 +338,6 @@ def call_loss(name, alpha=1, return_loss=False):
         if name == "OLL_"+type:
             return OLL(alpha, return_loss=return_loss, type=type, prox=True)
         if name == "Accumulating_SORD_prox_"+type:
+            return accumulating_with_sord_prox(alpha, return_loss=return_loss, type=type)
+        if name == "SLACE_"+type:
             return accumulating_with_sord_prox(alpha, return_loss=return_loss, type=type)
