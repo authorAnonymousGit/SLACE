@@ -22,10 +22,12 @@ The used datasets are provided in the [data](./datasets/) folder.
 
 ## Files
 1. [SLACE_full_paper.pdf](./SLACE_full_paper.pdf): SLACE paper cointaining full proofs.
-1. [Config.py](./config.py): Contains what datasets we want to use and the devision of the data, all datasets we used and their devisions are in comment,
+2. [Config.py](./config.py): Contains what datasets we want to use and the devision of the data, all datasets we used and their devisions are in comment,
 loss functions we want to check, alphas, range of random seeds, and params for the xgboost classifier.
 3. [Process_data.py](./process_data.py): Functions for processing of datasets and binning.
 4. [Losses.py](./losses.py): Implementation of all loss functions mentioned in [paper](./SLACE_full_paper.pdf).
 5. [Main.py](./main.py): Running the xgb classifier by config. Saves each xgb classifier prediction in csvs with columns Predictions,Probabilities, and Labels.
 6. Files in [code_for_graphs_from_paper](./code_for_graphs_from_paper/) contain the code to analyze the outputs from main to create the graphs in the paper.
+
+## Experiments
 
