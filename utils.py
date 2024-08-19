@@ -51,47 +51,6 @@ def create_prox_dom(prox_mat):
     return torch.stack(prox_dom_mat)
 
 
-def CrossEntropyLoss(outputs, targets):
-    num_examples = targets.shape[0]
-    batch_size = outputs.shape[0]
-    outputs = outputs[range(batch_size), targets.detach().numpy()]
-    del targets, batch_size
-    torch.cuda.empty_cache()
-    return -torch.sum(torch.log(outputs)) / num_examples
-
-
-def WOCEL(targets, softmax_vals):
-    alpha = 0.75
-    t=targets.detach().numpy()
-    labels_num = int(np.max(t)) + 1
-    d = Counter(t)
-    dist_dict = {int(k): int(v) for k, v in d.items()}
-    prox_mat = create_prox_mat(dist_dict, inv=False)
-    norm_prox_mat = f.normalize(prox_mat, p=1, dim=0)
-    prox_dom = create_prox_dom(prox_mat).double()
-    # The following two lines were added for converting the numpy arrays to torch tensors
-    # softmax_vals = torch.tensor(softmax_vals, requires_grad=True)
-    # targets = torch.tensor(targets)
-    targets.requires_grad_(False)
-
-    num_examples = targets.shape[0]
-    one_hot_target = torch.tensor(np.zeros([num_examples, labels_num]))
-    one_hot_target[range(num_examples), targets.long()] = 1
-    one_hot_target_comp = 1 - one_hot_target
-    elem_weight = norm_prox_mat[:, targets.long()].clone().t()
-    wrong_mass_weight = torch.sum(one_hot_target_comp * softmax_vals, dim=1).unsqueeze(dim=1) * one_hot_target_comp
-    mass_weights = alpha * one_hot_target + (1 - alpha) * wrong_mass_weight * elem_weight
-    sum_coeff = torch.matmul(softmax_vals.unsqueeze(dim=1).double(),
-                             prox_dom[targets.long()].double()).double().squeeze(dim=1)
-
-    # mass_weights = mass_weights.detach()
-    # sum_coeff = sum_coeff.detach()
-
-    loss_val = -1 * torch.sum(mass_weights * torch.log(softmax_vals / sum_coeff)) / num_examples
-
-    return loss_val
-
-
 def cem2(y_pred, y_true):
     dist_dict = dict(pd.DataFrame(y_true)[0].value_counts())
     prox_mat = create_prox_mat(dist_dict, inv=False)
