@@ -1,5 +1,3 @@
-from sklearn.model_selection import GridSearchCV
-
 from result_csvs import *
 from utils import *
 from process_data import *
@@ -8,13 +6,6 @@ from config import *
 import csv
 import numpy as np
 import sklearn.metrics
-
-
-def save_best_params_to_csv(best_params):
-    with open("best_xgb_params.csv", "a", newline="") as csvfile:
-        writer = csv.writer(csvfile)
-        for param, value in best_params.items():
-            writer.writerow([param, value])
 
 
 
@@ -126,8 +117,3 @@ if __name__ == '__main__':
 
             best_metrics_per_loss = find_best_metrics(data, bins, LOSS, ALPHA)
 
-            for loss, metrics in best_metrics_per_loss.items():
-                print(f"Best metrics for {loss}:")
-                print("Best accuracy:", metrics["Best Accuracy"])
-                print("Best CEM:", metrics["Best CEM"])
-                print("Best MSE:", metrics["Best MSE"])
