@@ -206,32 +206,6 @@ def Cross_entropy(alpha, return_loss=False):
     return Loss
 
 
-def Focal_loss(alpha=None, return_loss=False):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
-
-        batch_size = softmax_vals.shape[0]
-        targets = torch.tensor(targets, dtype=torch.long).to(softmax_vals.device)
-
-        # Select the probabilities corresponding to the target labels
-        pt = softmax_vals[range(batch_size), targets]
-
-        loss_val = -torch.sum(((1 - pt) ** alpha) * torch.log(pt))
-
-        if return_loss:
-            return loss_val
-
-        loss_val.backward()
-        grads = softmax_vals.grad.numpy()
-
-        del softmax_vals, targets, batch_size
-
-        return grads.flatten(), np.ones(grads.shape).flatten()
-
-    return Loss
-
-
 def SORD(alpha, return_loss=False, prox=False, type="max"):
     def Loss(targets, softmax_vals):
         labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
@@ -309,8 +283,6 @@ def OLL(alpha, return_loss=False, prox=False, type="max"):
 def call_loss(name, alpha=1, return_loss=False):
     if name == "Cross_Entropy":
         return Cross_entropy(alpha, return_loss=return_loss)
-    if name == "Focal_loss":
-        return Focal_loss(alpha, return_loss=return_loss)
     if name == "SORD":
         return SORD(alpha, return_loss=return_loss)
     if name == "OLL":
