@@ -1,8 +1,8 @@
 # SLACE: A Monotone and Balance-Sensitive Loss Function for Ordinal Regression
 
 ## Introduction
-Ordinal text classification is a special case oftext classification, in which there is an ordinal relationship among classes.
-We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), making use of information theory considerations and class ordinality.
+Ordinal classification is a special case of classification, in which there is an ordinal relationship among classes.
+We suggest a novel loss function, SLACE (Soft Labels Accumulating Cross Entropy), making use of information theory considerations and class ordinality.
 
 ## Prerequisites:  
 1. Python (3.6.8)
