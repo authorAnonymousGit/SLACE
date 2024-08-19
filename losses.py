@@ -29,38 +29,6 @@ def change_inputs(targets, softmax_vals):
     return labels_num, prox_mat.T, norm_prox_mat.T, prox_dom, softmax_vals, targets.long(), num_examples
 
 
-def WOCEL_alpha(alpha, return_loss=False):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
-
-        one_hot_target = torch.tensor(np.zeros([num_examples, labels_num])).to(device)
-        one_hot_target[range(num_examples), targets] = 1
-        one_hot_target_comp = 1 - one_hot_target
-        elem_weight = torch.tensor(norm_prox_mat[:, targets]).t()
-        wrong_mass_weight = torch.sum(one_hot_target_comp * softmax_vals, dim=1).unsqueeze(dim=1) * one_hot_target_comp
-        mass_weights = alpha * one_hot_target + (1 - alpha) * wrong_mass_weight * elem_weight
-        sum_coeff = torch.matmul(softmax_vals.unsqueeze(dim=1).double(), prox_dom[targets]).squeeze(dim=1)
-
-        mass_weights = mass_weights.detach()
-        sum_coeff = sum_coeff.detach()
-
-        loss_val = -1 * torch.sum(mass_weights * torch.log(softmax_vals / sum_coeff))
-
-        if return_loss == True:
-            return loss_val
-
-        loss_val.backward()
-        grads = softmax_vals.grad.numpy()
-
-        del softmax_vals, targets, sum_coeff, one_hot_target, one_hot_target_comp, wrong_mass_weight, \
-            mass_weights, elem_weight
-
-        return grads.flatten(), np.ones(grads.shape).flatten()
-
-    return Loss
-
-
 def WOCEL_accumulating(alpha, return_loss=False):
     def Loss(targets, softmax_vals):
         labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
@@ -291,8 +259,6 @@ def call_loss(name, alpha=1, return_loss=False):
         return SORD(alpha, return_loss=return_loss, prox=True)
     if name == "OLL_prox":
         return OLL(alpha, return_loss=return_loss, prox=True)
-    if name == "Wocel":
-        return WOCEL_alpha(alpha, return_loss=return_loss)
     if name == "Accumulating":
         return WOCEL_accumulating(alpha, return_loss=return_loss)
     if name == "Accumulating_SORD_prox":
