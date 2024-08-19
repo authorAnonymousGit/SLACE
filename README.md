@@ -23,8 +23,8 @@ The used datasets are provided in the [data](./datasets/) folder.
 ## Python files
 1. [Config.py](./config.py): Contains what datasets we want to use and the devision of the data, all datasets we used and their devisions are in comment,
 loss functions we want to check, alphas, range of random seeds, and params for the xgboost classifier.
-3. [process_data.py](./process_data.py): Functions for processing of datasets and binning.
-4. [losses.py](./losses.py): Implementation of all loss functions mentioned in paper.
-5. [main.py](./main.py): Running the xgb classifier by config. Saves each xgb classifier prediction in csvs with columns Predictions,Probabilities, and Labels.
-6. files in [code_for_graphs_from_paper](./code_for_graphs_from_paper/) contain the code to analyze the outputs from main to create the graphs in the paper.
+3. [Process_data.py](./process_data.py): Functions for processing of datasets and binning.
+4. [Losses.py](./losses.py): Implementation of all loss functions mentioned in paper.
+5. [Main.py](./main.py): Running the xgb classifier by config. Saves each xgb classifier prediction in csvs with columns Predictions,Probabilities, and Labels.
+6. Files in [code_for_graphs_from_paper](./code_for_graphs_from_paper/) contain the code to analyze the outputs from main to create the graphs in the paper.
 
