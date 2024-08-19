@@ -20,7 +20,6 @@ We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), m
 The used datasets are provided in the [data](./datasets/) folder.
 
 
-## Running Experiments
-1. Update the relevant config file ([Config0](./config0.py) or [Config1](./config1.py)). Use 0 if cuda=0 and 1 if cuda=1.
-   with your configuration details. Please follow the details inside the given file.
+## Python files
+1. [Config.py](./config.py)
 2. Run [run_primary.sh](./run_pipeline.sh): 
