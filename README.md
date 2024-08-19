@@ -17,7 +17,7 @@ We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), m
 ## Getting Started
 
 ## Datasets
-The used datasets are provided in the [data](./datasets/) folder, 
+The used datasets are provided in the [data](./datasets/) folder.
 
 
 ## Running Experiments
