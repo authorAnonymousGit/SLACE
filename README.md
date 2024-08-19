@@ -20,7 +20,8 @@ We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), m
 The used datasets are provided in the [data](./datasets/) folder.
 
 
-## Python files
+## Files
+1. [SLACE_full_paper.pdf](./SLACE_full_paper.pdf): SLACE paper cointaining full proofs.
 1. [Config.py](./config.py): Contains what datasets we want to use and the devision of the data, all datasets we used and their devisions are in comment,
 loss functions we want to check, alphas, range of random seeds, and params for the xgboost classifier.
 3. [Process_data.py](./process_data.py): Functions for processing of datasets and binning.
