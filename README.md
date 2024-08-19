@@ -10,7 +10,8 @@ We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), m
 3. pandas (1.1.5)
 4. numpy (1.19.5)
 5. sklearn (0.24.2)
-6. 
+6. scipy (1.5.4)
+7. xgboost (1.5.2)
 
 
 ## Getting Started
@@ -23,7 +24,7 @@ We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), m
 | [SemEval-2017 Task 4-A (English)](https://alt.qcri.org/semeval2017/task4/)  | 12,378  | 4,127  | 4,127  | 3  | 
 | [Amazon (Amazon Electronics)](https://nijianmo.github.io/amazon/index.html)  | 8,998  | 2,998  | 2,999  | 5  | 
 
-The used datasets are provided in the [data](./data/) folder, 
+The used datasets are provided in the [data](./datasets/) folder, 
 divided to train, validation and test.
 
 Each file contains the following attributes:
