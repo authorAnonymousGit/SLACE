@@ -261,9 +261,7 @@ def call_loss(name, alpha=1, return_loss=False):
         return accumulating_with_sord_prox(alpha, return_loss=return_loss)
     if name == "Accumulating_SORD_norm_prox":
         return accumulating_with_sord_prox(alpha, return_loss=return_loss, type="norm_max")
-    if name == "Accumulating_SORD":
-        return accumulating_with_sord(alpha, return_loss=return_loss)
-    if name == "SLACE":
+    if name == "Accumulating_SORD" or name == "SLACE":
         return accumulating_with_sord(alpha, return_loss=return_loss)
     types = ["max","norm_max", "norm_log", "log", "norm_division", "division"]
     for type in types:
@@ -271,7 +269,5 @@ def call_loss(name, alpha=1, return_loss=False):
             return SORD(alpha, return_loss=return_loss, type=type, prox=True)
         if name == "OLL_"+type:
             return OLL(alpha, return_loss=return_loss, type=type, prox=True)
-        if name == "Accumulating_SORD_prox_"+type:
-            return accumulating_with_sord_prox(alpha, return_loss=return_loss, type=type)
-        if name == "SLACE_"+type:
+        if name == "Accumulating_SORD_prox_"+type or name == "SLACE_"+type:
             return accumulating_with_sord_prox(alpha, return_loss=return_loss, type=type)
