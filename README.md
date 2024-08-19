@@ -5,12 +5,12 @@ Ordinal text classification is a special case oftext classification, in which th
 We suggest a novel loss function, WOCEL (weighted ordinal cross entropy loss), making use of information theory considerations and class ordinality.
 
 ## Prerequisites:  
-1. GPU 
-2. [Anaconda 3](https://www.anaconda.com/download/)  
-3. [Pytorch](https://pytorch.org/)
-4. [Transformers](https://pytorch.org/hub/huggingface_pytorch-transformers/)
-5. [Keras (Version 2.4.3)](https://keras.io/)
-6. The same as described in [SentiLARE](https://github.com/thu-coai/SentiLARE) (only if you are interested in running SentiLARE).
+1. Python (3.6.8)
+2. [Pytorch](https://pytorch.org/)(1.10.2) 
+3. pandas (1.1.5)
+4. numpy (1.19.5)
+5. sklearn (0.24.2)
+6. 
 
 
 ## Getting Started
