@@ -6,7 +6,7 @@ from collections import Counter
 from utils import *
 
 
-def change_inputs(targets, softmax_vals):
+def change_inputs(targets, output_vals):
     targets = targets + 1
     labels_num = int(np.max(targets))
     d = Counter(targets)
@@ -16,19 +16,19 @@ def change_inputs(targets, softmax_vals):
     prox_dom = create_prox_dom(prox_mat).double()
 
     targets = targets - 1
-    softmax_vals = torch.tensor(softmax_vals, requires_grad=True)
+    output_vals = torch.tensor(output_vals, requires_grad=True)
     targets = torch.tensor(targets)
     targets.requires_grad_(False)
     num_examples = targets.shape[0]
     # print(norm_prox_mat)
     # print(prox_mat)
-    return labels_num, prox_mat.T, norm_prox_mat.T, prox_dom, softmax_vals, targets.long(), num_examples
+    return labels_num, prox_mat.T, norm_prox_mat.T, prox_dom, output_vals, targets.long(), num_examples
 
 
 def WOCEL_accumulating(alpha, return_loss=False):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
         one_hot_target = torch.tensor(np.zeros([num_examples, labels_num]))
         one_hot_target[range(num_examples), targets.long()] = 1
@@ -36,7 +36,7 @@ def WOCEL_accumulating(alpha, return_loss=False):
         mass_weights = alpha * one_hot_target + (1 - alpha) * one_hot_target_comp
 
         accumulating_softmax = torch.matmul(prox_dom[targets.long()].double(),
-                                            torch.unsqueeze(softmax_vals, 2).double()).double().squeeze(dim=2)
+                                            torch.unsqueeze(output_vals, 2).double()).double().squeeze(dim=2)
 
         loss_val = -1 * torch.sum(mass_weights * torch.log(accumulating_softmax))
 
@@ -44,9 +44,9 @@ def WOCEL_accumulating(alpha, return_loss=False):
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del softmax_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
+        del output_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
             mass_weights
 
         return grads.flatten(), np.ones(grads.shape).flatten()
@@ -55,9 +55,9 @@ def WOCEL_accumulating(alpha, return_loss=False):
 
 
 def accumulating_with_sord_prox(alpha, return_loss=False, type="max"):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
         if type == "max":
             phi = torch.max(prox_mat) - prox_mat[targets].to(device)
@@ -80,7 +80,7 @@ def accumulating_with_sord_prox(alpha, return_loss=False, type="max"):
         mass_weights = one_hot_target * softmax_targets + one_hot_target_comp * softmax_targets
 
         accumulating_softmax = torch.matmul(prox_dom[targets.long()].double(),
-                                            torch.unsqueeze(softmax_vals, 2).double()).double().squeeze(dim=2)
+                                            torch.unsqueeze(output_vals, 2).double()).double().squeeze(dim=2)
 
         loss_val = -1 * torch.sum(mass_weights * torch.log(accumulating_softmax))
 
@@ -88,9 +88,9 @@ def accumulating_with_sord_prox(alpha, return_loss=False, type="max"):
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del softmax_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
+        del output_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
             mass_weights
 
         return grads.flatten(), np.ones(grads.shape).flatten()
@@ -99,9 +99,9 @@ def accumulating_with_sord_prox(alpha, return_loss=False, type="max"):
 
 
 def accumulating_with_sord(alpha, return_loss=False):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
         phi = torch.abs(torch.arange(labels_num, device=device).view(1, -1) - targets.double().view(-1, 1))
 
@@ -129,7 +129,7 @@ def accumulating_with_sord(alpha, return_loss=False):
         prox_dom = torch.stack(matrices)
 
         accumulating_softmax = torch.matmul(prox_dom[targets.long()].double(),
-                                            torch.unsqueeze(softmax_vals, 2).double()).double().squeeze(dim=2)
+                                            torch.unsqueeze(output_vals, 2).double()).double().squeeze(dim=2)
 
         loss_val = -1 * torch.sum(mass_weights * torch.log(accumulating_softmax))
 
@@ -137,9 +137,9 @@ def accumulating_with_sord(alpha, return_loss=False):
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del softmax_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
+        del output_vals, targets, accumulating_softmax, one_hot_target, one_hot_target_comp, \
             mass_weights
 
         return grads.flatten(), np.ones(grads.shape).flatten()
@@ -148,12 +148,12 @@ def accumulating_with_sord(alpha, return_loss=False):
 
 
 def Cross_entropy(alpha, return_loss=False):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
-        batch_size = softmax_vals.shape[0]
-        outputs = softmax_vals[range(batch_size), targets]
+        batch_size = output_vals.shape[0]
+        outputs = output_vals[range(batch_size), targets]
         torch.cuda.empty_cache()
         loss_val = -torch.sum(torch.log(outputs))
 
@@ -161,9 +161,9 @@ def Cross_entropy(alpha, return_loss=False):
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del softmax_vals, targets, batch_size
+        del output_vals, targets, batch_size
 
         return grads.flatten(), np.ones(grads.shape).flatten()
 
@@ -171,9 +171,9 @@ def Cross_entropy(alpha, return_loss=False):
 
 
 def SORD(alpha, return_loss=False, prox=False, type="max"):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
         if not prox:
             phi = torch.abs(torch.arange(labels_num, device=device).view(1, -1) - targets.double().view(-1, 1))
@@ -193,15 +193,15 @@ def SORD(alpha, return_loss=False, prox=False, type="max"):
 
         softmax_targets = f.softmax(-alpha * phi, dim=1).to(device)
 
-        loss_val = -1 * torch.sum(softmax_targets * torch.log(softmax_vals))
+        loss_val = -1 * torch.sum(softmax_targets * torch.log(output_vals))
 
         if return_loss == True:
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del softmax_targets, softmax_vals, targets
+        del softmax_targets, output_vals, targets
 
         return grads.flatten(), np.ones(grads.shape).flatten()
 
@@ -209,9 +209,9 @@ def SORD(alpha, return_loss=False, prox=False, type="max"):
 
 
 def OLL(alpha, return_loss=False, prox=False, type="max"):
-    def Loss(targets, softmax_vals):
-        labels_num, prox_mat, norm_prox_mat, prox_dom, softmax_vals, targets, num_examples = change_inputs(targets,
-                                                                                                           softmax_vals)
+    def Loss(targets, output_vals):
+        labels_num, prox_mat, norm_prox_mat, prox_dom, output_vals, targets, num_examples = change_inputs(targets,
+                                                                                                           output_vals)
 
         if not prox:
             dis = torch.abs(torch.arange(labels_num, device=device).view(1, -1) - targets.double().view(-1, 1))
@@ -229,15 +229,15 @@ def OLL(alpha, return_loss=False, prox=False, type="max"):
             if type == "division":
                 dis = 1 / (prox_mat[targets].to(device))
 
-        loss_val = -1 * torch.sum(torch.log(1 - softmax_vals) * (dis ** alpha))
+        loss_val = -1 * torch.sum(torch.log(1 - output_vals) * (dis ** alpha))
 
         if return_loss == True:
             return loss_val
 
         loss_val.backward()
-        grads = softmax_vals.grad.numpy()
+        grads = output_vals.grad.numpy()
 
-        del dis, softmax_vals, targets
+        del dis, output_vals, targets
 
         return grads.flatten(), np.ones(grads.shape).flatten()
 
